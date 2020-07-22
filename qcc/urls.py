@@ -18,6 +18,6 @@ from django.urls import path
 from qc import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin', admin.site.urls),
     path('api/createcompany/', views.Company_Detail.as_view()),
 ]
