@@ -121,22 +121,34 @@ USE_L10N = True
 
 USE_TZ = True
 
-APPEND_SLASH=False
+APPEND_SLASH = False
+
+SIMPLEUI_HOME_INFO = False
+
+LANGUAGE_CODE = 'zh-hans'
+
+TIME_ZONE = 'Asia/Shanghai'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
-SIMPLEUI_CONFIG = {
-    'system_keep': True,      # 开启排序和过滤功能, 不填此字段为默认排序和全部显示, 空列表[] 为全部不显示.
-    'dynamic': True,    # 设置是否开启动态菜单, 默认为False. 如果开启, 则会在每次用户登陆时动态展示菜单内容
-    'menus': [{
-        'name': '测试',
-        'icon': 'fa fa-file',
-        'models': [{
-            'name': 'Baidu',
-            'url': 'http://baidu.com',
-            'icon': 'far fa-surprise'
-        }]}
-        ]
-}
+# SIMPLEUI_CONFIG = {
+#     'system_keep': True,      # 开启排序和过滤功能, 不填此字段为默认排序和全部显示, 空列表[] 为全部不显示.
+#     'dynamic': True,    # 设置是否开启动态菜单, 默认为False. 如果开启, 则会在每次用户登陆时动态展示菜单内容
+#     'menus': [{
+#         'name': '企查查',
+#         'icon': 'fa fa-file',
+#         'models': [{
+#             'name': '企业详情',
+#             'url': 'localhost:8000/admin#/adminqc/companydetail/',
+#             'icon': 'far fa-surprise'
+#         },
+#             {
+#             'name': '用户',
+#             'url': '127.0.0.1:8000/admin#/adminauth/user',
+#             'icon': 'far fa-surprise'
+#             }
+#         ]}
+#         ]
+# }
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
      os.path.join(BASE_DIR, "static"),

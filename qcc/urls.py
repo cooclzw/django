@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.views.generic.base import RedirectView
 from qc import views
 
 urlpatterns = [
     path('admin', admin.site.urls),
     path('api/createcompany/', views.Company_Detail.as_view()),
+    #path('api/showcompany/', views.Company_Detail.as_view()),
+    path('api/showcompany/', RedirectView.as_view(url='https://www.baidu.com/')),
 ]

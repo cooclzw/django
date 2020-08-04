@@ -3,7 +3,7 @@ from django.db import models
 
 # Create your models here.
 class Personage(models.Model):
-    character_id = models.CharField(u'人物编号', max_length=32, primary_key=True, unique=True)
+    character_id = models.CharField(u'人物编号', max_length=32)
     name = models.CharField(u'自然人姓名', max_length=16)
     brief_into = models.CharField(u'人物简介', max_length=512, null=True, blank=True)
     ct_time = models.DateField(u'创建时间')
@@ -16,7 +16,7 @@ class Personage(models.Model):
 
 
 class CompanyDetail(models.Model):
-    company_qcc_id = models.CharField(u'企业编号', max_length=32, primary_key=True, unique=True)
+    company_qcc_id = models.CharField(u'企业编号', max_length=32)
     company_en = models.CharField(u'英文名', max_length=512, blank=True, null=True)
     company_cn = models.CharField(u'中文名', max_length=100)
     company_status = models.CharField(u'公司状态', max_length=100, blank=True, null=True)
@@ -27,21 +27,22 @@ class CompanyDetail(models.Model):
     company_email_add = models.CharField(u'公司邮箱', max_length=50, null=True, blank=True)
     company_address = models.CharField(u'公司地址', max_length=50, null=True, blank=True)
     company_brief_introduction = models.CharField(u'公司简介', max_length=512, null=True, blank=True)
-    ct_time = models.DateField(u'创建时间')
-    up_time = models.DateField(u'更新时间')
+    ct_time = models.DateField(u'创建时间', auto_now=True)
+    up_time = models.DateField(u'更新时间', auto_now=True)
 
     class Meta:
         verbose_name_plural = "企业详情"  # admin 界面显示名
+        default_permissions = ('add', 'delete', 'view')  # admin界面权限操作
+
+    def __str__(self):
+        return self.company_qcc_id
 
 
 class TopShareholders(models.Model):
-    company_qcc_id = models.ForeignKey(CompanyDetail, related_name='被控股公司', on_delete=models.CASCADE,
-                                       to_field='company_qcc_id')
+    company_qcc_id = models.ForeignKey(CompanyDetail, related_name='被控股公司', on_delete=models.CASCADE,)
     shareholders_name = models.CharField(max_length=255)
-    character_id = models.ForeignKey(Personage, on_delete=models.CASCADE, to_field='character_id', null=True,
-                                     blank=True)
-    sholder_company_qcc_id = models.ForeignKey(CompanyDetail, related_name='控股公司', on_delete=models.CASCADE,
-                                               to_field='company_qcc_id', null=True, blank=True)
+    character_id = models.ForeignKey(Personage, on_delete=models.CASCADE,  null=True,blank=True)
+    sholder_company_qcc_id = models.ForeignKey(CompanyDetail, related_name='控股公司', on_delete=models.CASCADE, null=True, blank=True)
     shares_held_num = models.CharField(max_length=255, null=True, blank=True)
     sharesholding_ratio = models.CharField(max_length=255, null=True, blank=True)
     ulitimate_beneficial = models.CharField(max_length=255, null=True, blank=True)
@@ -57,8 +58,7 @@ class TopShareholders(models.Model):
 
 # 上市信息，一对一公司详情
 class CompanyListingInfo(models.Model):
-    company_qcc_id = models.ForeignKey('CompanyDetail', related_name='关联公司', on_delete=models.CASCADE,
-                                       to_field='company_qcc_id')
+    company_qcc_id = models.ForeignKey('CompanyDetail', related_name='关联公司', on_delete=models.CASCADE,)
     company_stock_type = models.CharField(u'上市类型', max_length=255, null=True, blank=True)
     company_stock_market = models.CharField(u'公司股市名', max_length=255, null=True, blank=True)
     company_stock_index = models.CharField(u'当前股指', max_length=255, null=True, blank=True)
@@ -106,8 +106,7 @@ class CompanyListingInfo(models.Model):
 
 
 class CompanyEssentialInfo(models.Model):
-    company_qcc_id = models.ForeignKey('CompanyDetail', related_name='母公司', on_delete=models.CASCADE,
-                                       to_field='company_qcc_id')
+    company_qcc_id = models.ForeignKey('CompanyDetail', related_name='母公司', on_delete=models.CASCADE,)
     legal_representative = models.CharField(u'法定代表人', max_length=255, null=True, blank=True)
     business_status = models.CharField(u'经营状态', max_length=255, null=True, blank=True)
     date_of_establishment = models.DateField(u'成立日期', null=True, blank=True)
@@ -134,10 +133,9 @@ class CompanyEssentialInfo(models.Model):
 
 
 class CorporateExecutives(models.Model):
-    company_qcc_id = models.ForeignKey('CompanyDetail', related_name='任职公司', on_delete=models.CASCADE,
-                                       to_field='company_qcc_id')
+    company_qcc_id = models.ForeignKey('CompanyDetail', related_name='任职公司', on_delete=models.CASCADE,)
     name = models.CharField(u'姓名',max_length=16)
-    character= models.ForeignKey(Personage, on_delete=models.CASCADE, to_field='character_id', related_name='高管人员')
+    character= models.ForeignKey(Personage, on_delete=models.CASCADE, related_name='高管人员')
     gender = models.CharField(u'性别',max_length=16,null=True,blank=True)
     education = models.CharField(u'学历',max_length=16,null=True,blank=True)
     duty = models.CharField(u'职务',max_length=16,null=True,blank=True)
@@ -152,8 +150,7 @@ class CorporateExecutives(models.Model):
 
 
 class HoldingEnterprise(models.Model):
-    company_qcc_id = models.ForeignKey('CompanyDetail', related_name='直接控股公司', on_delete=models.CASCADE,
-                                       to_field='company_qcc_id')
+    company_qcc_id = models.ForeignKey('CompanyDetail', related_name='直接控股公司', on_delete=models.CASCADE,)
     holding_enterprise_name = models.CharField(u'被控股公司名称',max_length=32)
     holding_enterprise_qcc_id = models.CharField(u'控股公司编号',max_length=50)
     investment_ratio = models.CharField(u'投资比',max_length=50,null=True,blank=True)
@@ -163,9 +160,9 @@ class HoldingEnterprise(models.Model):
 
 
 class OutboundInvestment(models.Model):
-    character = models.ForeignKey(Personage, on_delete=models.CASCADE, to_field='character_id',related_name='投资人')
+    character = models.ForeignKey(Personage, on_delete=models.CASCADE,related_name='投资人')
     company_name = models.CharField(u'公司名', max_length=32)
-    company_qcc_id = models.ForeignKey(CompanyDetail, on_delete=models.CASCADE, to_field='company_qcc_id', related_name='接受投资方')
+    company_qcc_id = models.ForeignKey(CompanyDetail, on_delete=models.CASCADE, related_name='接受投资方')
     shareholding_ratio = models.CharField(u'持股比例', max_length=8, null=True, blank=True)
     starting_and_ending_time = models.CharField(u'持股起止时间',max_length=16, null=True, blank=True)
     registered_captial = models.CharField(u'注册资本', max_length=8, null=True, blank=True)
@@ -181,8 +178,8 @@ class OutboundInvestment(models.Model):
 
 
 class Corporation(models.Model):
-    character = models.ForeignKey(Personage, on_delete=models.CASCADE, to_field='character_id',related_name='法人信息')
-    company_qcc_id = models.ForeignKey(CompanyDetail, on_delete=models.CASCADE, to_field='company_qcc_id', related_name='担任法人的公司')
+    character = models.ForeignKey(Personage, on_delete=models.CASCADE,related_name='法人信息')
+    company_qcc_id = models.ForeignKey(CompanyDetail, on_delete=models.CASCADE, related_name='担任法人的公司')
     company_name = models.CharField(u'公司名', max_length=32)
     shareholding_ratio = models.CharField(u'持股比例', max_length=8, null=True, blank=True)
     starting_and_ending_time = models.CharField(u'法人起止时间', max_length=8, null=True, blank=True)
@@ -198,8 +195,8 @@ class Corporation(models.Model):
 
 
 class ServingAborad(models.Model):
-    character = models.ForeignKey(Personage, on_delete=models.CASCADE, to_field='character_id',related_name='任职人信息')
-    company_qcc_id = models.ForeignKey(CompanyDetail, on_delete=models.CASCADE, to_field='company_qcc_id', related_name='任职的公司')
+    character = models.ForeignKey(Personage, on_delete=models.CASCADE,related_name='任职人信息')
+    company_qcc_id = models.ForeignKey(CompanyDetail, on_delete=models.CASCADE, related_name='任职的公司')
     company_name = models.CharField(u'公司名', max_length=32)
     position = models.CharField(u'职位', max_length=32, null=True, blank=True)
     starting_and_ending_time = models.CharField(u'任职起止时间', max_length=16, null=True, blank=True)
@@ -216,8 +213,8 @@ class ServingAborad(models.Model):
 
 
 class EnterPrises(models.Model):
-    character = models.ForeignKey(Personage, on_delete=models.CASCADE, to_field='character_id',related_name='老板信息')
-    company_qcc_id = models.ForeignKey(CompanyDetail, on_delete=models.CASCADE, to_field='company_qcc_id', related_name='拥有的公司')
+    character = models.ForeignKey(Personage, on_delete=models.CASCADE,related_name='老板信息')
+    company_qcc_id = models.ForeignKey(CompanyDetail, on_delete=models.CASCADE, related_name='拥有的公司')
     company_name = models.CharField(u'公司名', max_length=32)
     position = models.CharField(u'职位', max_length=32, null=True, blank=True)
     registered_capital = models.CharField(u'注册资本', max_length=16, null=True, blank=True)
